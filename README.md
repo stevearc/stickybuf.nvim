@@ -85,3 +85,22 @@ You can also use autocmd to pin buffers conditionally
 " Pin the buffer to any window that is fixed width or height
 autocmd BufEnter * if &winfixwidth || &winfixheight | silent! PinBuffer | endif
 ```
+
+## How does it work?
+Since stickybuf is compensating for missing behavior in vim itself, the
+implementation is necessarily something of a hack. When a buffer is pinned, its
+information is stored on the current window in window-local variables. Stickybuf
+registers a callback on `BufEnter` that examines the current window and, if that
+window is pinned, restores the previous buffer and opens the new buffer in an
+unpinned window.
+
+Since stickybuf relies on being able to restore the pinned buffer after it is
+hidden, it overrides the `bufhidden` option of pinned buffers and only cleans up
+the buffer after a delay. The delay provides enough time to make sure that the
+buffer isn't going to be restored to the pinned window.
+
+**Warning**: If you are using any plugin or functionality that relies upon
+`bufhidden`, particularly if it relies on `bufhidden` to trigger `BufUnload`,
+`BufDelete`, or `BufWipeout` immediately, stickybuf *could* cause issues. See
+[#1](https://github.com/stevearc/stickybuf.nvim/issues/1) for a case where this
+happens with Neogit.
