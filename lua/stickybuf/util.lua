@@ -37,10 +37,14 @@ end
 
 M.is_sticky_win = function(winid)
   winid = winid or vim.api.nvim_get_current_win()
-  return pcall(vim.api.nvim_win_get_var, winid, "sticky_original_bufnr")
+  local ok, bufnr = pcall(vim.api.nvim_win_get_var, winid or 0, "sticky_original_bufnr")
+  return ok and vim.api.nvim_buf_is_valid(bufnr)
 end
 
 M.is_sticky_match = function()
+  if not M.is_sticky_win() then
+    return true
+  end
   if vim.w.sticky_bufnr and vim.w.sticky_bufnr ~= vim.api.nvim_get_current_buf() then
     return false
   end

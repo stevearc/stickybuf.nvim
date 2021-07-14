@@ -69,12 +69,13 @@ end
 local function already_pinned(bang, cmd)
   if util.is_sticky_win() then
     if bang == "" then
-      error(string.format("Window is already pinned. Use %s! to override", cmd))
+      error(
+        string.format("Window is already pinned. Use '%s!' to override or 'silent! %s' to ignore this error", cmd, cmd)
+      )
       return true
-    else
-      M.unpin_buffer(true)
     end
   end
+  M.unpin_buffer(true)
 end
 
 M.pin_buffer = function(bang)
