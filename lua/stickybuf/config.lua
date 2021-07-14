@@ -28,7 +28,6 @@ local Config = {
   },
   bufname = {
     ["Neogit.*Popup"] = "bufnr",
-    ['.*NEOGIT_COMMIT_EDITMSG'] = 'bufnr',
   },
   -- Some autocmds for plugins that need a bit more logic
   autocmds = {
