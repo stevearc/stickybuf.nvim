@@ -33,6 +33,8 @@ local Config = {
   autocmds = {
     -- Only pin defx if it was opened as a split (has fixed height/width)
     defx = [[au FileType defx if &winfixwidth || &winfixheight | silent! PinFiletype | endif]],
+    -- Only pin fern if it was opened as a split (has fixed height/width)
+    fern = [[au FileType fern if &winfixwidth || &winfixheight | silent! PinFiletype | endif]],
     -- Only pin neogit if it was opened as a split (there is more than one window)
     neogit = [[au FileType NeogitStatus,NeogitLog,NeogitGitCommandHistory if winnr('$') > 1 | silent! PinFiletype | endif]],
   }
