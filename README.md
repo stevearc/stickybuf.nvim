@@ -18,6 +18,7 @@ Stickybuf provides built-in support for:
 * help
 * [NERDtree](https://github.com/preservim/nerdtree)
 * [defx](https://github.com/Shougo/defx.nvim)
+* [fern](https://github.com/lambdalisue/fern.vim)
 * [aerial](https://github.com/stevearc/aerial.nvim)
 * [neogit](https://github.com/TimUntersberger/neogit)
 
