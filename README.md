@@ -1,4 +1,5 @@
 # stickybuf.nvim
+
 Neovim plugin for locking a buffer to a window
 
 Have you ever accidentally opened a file into your file explorer or quickfix window?
@@ -14,13 +15,14 @@ in that window will be reverted and re-routed to the nearest available window.
 ## Support
 
 Stickybuf provides built-in support for:
-* quickfix
-* help
-* [NERDtree](https://github.com/preservim/nerdtree)
-* [defx](https://github.com/Shougo/defx.nvim)
-* [fern](https://github.com/lambdalisue/fern.vim)
-* [aerial](https://github.com/stevearc/aerial.nvim)
-* [neogit](https://github.com/TimUntersberger/neogit)
+
+- quickfix
+- help
+- [NERDtree](https://github.com/preservim/nerdtree)
+- [defx](https://github.com/Shougo/defx.nvim)
+- [fern](https://github.com/lambdalisue/fern.vim)
+- [aerial](https://github.com/stevearc/aerial.nvim)
+- [neogit](https://github.com/TimUntersberger/neogit)
 
 If there is another project that you would like to add out-of-the-box support
 for, submit a pull request with a change to [the default config
@@ -28,12 +30,12 @@ file](https://github.com/stevearc/stickybuf.nvim/blob/master/lua/stickybuf/confi
 
 ## Commands
 
-Command          | description
--------          | -----------
-`PinBuffer[!]`   | Pin the current buffer to the window.
-`PinBuftype[!]`  | Pin the current buftype to the window. It will allow any buffers with the same buftype.
-`PinFiletype[!]` | Pin the current filetype to the window. It will allow any buffers with the same filetype.
-`UnpinBuffer`    | Remove any type of pinning from the current window.
+| Command          | description                                                                               |
+| ---------------- | ----------------------------------------------------------------------------------------- |
+| `PinBuffer[!]`   | Pin the current buffer to the window.                                                     |
+| `PinBuftype[!]`  | Pin the current buftype to the window. It will allow any buffers with the same buftype.   |
+| `PinFiletype[!]` | Pin the current filetype to the window. It will allow any buffers with the same filetype. |
+| `UnpinBuffer`    | Remove any type of pinning from the current window.                                       |
 
 ## Configuration
 
@@ -85,12 +87,14 @@ require("stickybuf").setup({
 ```
 
 You can also use autocmd to pin buffers conditionally
+
 ```vim
 " Pin the buffer to any window that is fixed width or height
 autocmd BufEnter * if &winfixwidth || &winfixheight | silent! PinBuffer | endif
 ```
 
 ## How does it work?
+
 Since stickybuf is compensating for missing behavior in vim itself, the
 implementation is necessarily something of a hack. When a buffer is pinned, its
 information is stored on the current window in window-local variables. Stickybuf
@@ -105,6 +109,6 @@ buffer isn't going to be restored to the pinned window.
 
 **Warning**: If you are using any plugin or functionality that relies upon
 `bufhidden`, particularly if it relies on `bufhidden` to trigger `BufUnload`,
-`BufDelete`, or `BufWipeout` immediately, stickybuf *could* cause issues. See
+`BufDelete`, or `BufWipeout` immediately, stickybuf _could_ cause issues. See
 [#1](https://github.com/stevearc/stickybuf.nvim/issues/1) for a case where this
 happens with Neogit.
