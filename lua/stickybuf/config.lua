@@ -30,6 +30,7 @@ local Config = {
     ["Neogit.*Popup"] = "bufnr",
   },
   -- Some autocmds for plugins that need a bit more logic
+  -- Set to `false` to disable the autocmd
   autocmds = {
     -- Only pin defx if it was opened as a split (has fixed height/width)
     defx = [[au FileType defx if &winfixwidth || &winfixheight | silent! PinFiletype | endif]],
