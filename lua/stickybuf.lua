@@ -58,9 +58,7 @@ M.on_buf_hidden = function(bufnr)
     -- We need a long delay for this to make sure we're not going to restore this buffer
     vim.defer_fn(function()
       if vim.api.nvim_buf_is_valid(bufnr) and #vim.fn.win_findbuf(bufnr) == 0 then
-        vim.api.nvim_buf_call(bufnr, function()
-          vim.cmd(string.format("silent! b%s!", prev_bufhidden))
-        end)
+        vim.cmd(string.format("silent! b%s! %d", prev_bufhidden, bufnr))
       end
     end, 1000)
   end
