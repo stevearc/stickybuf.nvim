@@ -25,6 +25,7 @@ local Config = {
   filetype = {
     aerial = "filetype",
     nerdtree = "filetype",
+    TelescopePrompt = "filetype",
   },
   bufname = {
     ["Neogit.*Popup"] = "bufnr",
