@@ -82,7 +82,11 @@ local function already_pinned(bang, cmd)
   if util.is_sticky_win() then
     if bang == "" then
       error(
-        string.format("Window is already pinned. Use '%s!' to override or 'silent! %s' to ignore this error", cmd, cmd)
+        string.format(
+          "Window is already pinned. Use '%s!' to override or 'silent! %s' to ignore this error",
+          cmd,
+          cmd
+        )
       )
       return true
     end
@@ -135,9 +139,15 @@ M.setup = function(opts)
     autocmd BufEnter * lua require'stickybuf'.on_buf_enter()
   augroup END
   ]])
-  vim.cmd([[command! -bar -bang PinBuffer call luaeval("require'stickybuf'.pin_buffer(_A)", expand('<bang>'))]])
-  vim.cmd([[command! -bar -bang PinBuftype call luaeval("require'stickybuf'.pin_buftype(_A)", expand('<bang>'))]])
-  vim.cmd([[command! -bar -bang PinFiletype call luaeval("require'stickybuf'.pin_filetype(_A)", expand('<bang>'))]])
+  vim.cmd(
+    [[command! -bar -bang PinBuffer call luaeval("require'stickybuf'.pin_buffer(_A)", expand('<bang>'))]]
+  )
+  vim.cmd(
+    [[command! -bar -bang PinBuftype call luaeval("require'stickybuf'.pin_buftype(_A)", expand('<bang>'))]]
+  )
+  vim.cmd(
+    [[command! -bar -bang PinFiletype call luaeval("require'stickybuf'.pin_filetype(_A)", expand('<bang>'))]]
+  )
   vim.cmd([[command! -bar UnpinBuffer lua require'stickybuf'.unpin_buffer()]])
   local cmd = [[augroup StickyBufIntegration
     au!
