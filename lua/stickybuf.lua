@@ -55,10 +55,24 @@ end
 M.on_buf_hidden = function(bufnr)
   local ok, prev_bufhidden = pcall(vim.api.nvim_buf_get_var, bufnr, "prev_bufhidden")
   if ok then
+    -- Set nomodified on the buffer. If we try to quit nvim shortly after
+    -- leaving a modified buffer (e.g. a Telescope prompt), nvim will NOT quit
+    -- and instead inform you that you have modified buffers to take care of.
+    -- To avoid that we set nomodified, and restore the previous modified state
+    -- if we end up not garbage collecting this buffer.
+    -- (see https://github.com/stevearc/stickybuf.nvim/pull/6)
+    local was_modified = vim.api.nvim_buf_get_option(bufnr, "modified")
+    if was_modified then
+      vim.api.nvim_buf_set_option(bufnr, "modified", false)
+    end
     -- We need a long delay for this to make sure we're not going to restore this buffer
     vim.defer_fn(function()
-      if vim.api.nvim_buf_is_valid(bufnr) and #vim.fn.win_findbuf(bufnr) == 0 then
-        vim.cmd(string.format("silent! b%s! %d", prev_bufhidden, bufnr))
+      if vim.api.nvim_buf_is_valid(bufnr) then
+        if util.is_buf_in_any_win(bufnr) then
+          vim.api.nvim_buf_set_option(bufnr, "modified", was_modified)
+        else
+          vim.cmd(string.format("silent! b%s! %d", prev_bufhidden, bufnr))
+        end
       end
     end, 1000)
   end

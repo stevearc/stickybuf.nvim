@@ -20,7 +20,7 @@ M.get_stick_type = function()
   if M.is_empty_buffer() then
     return nil
   end
-  local bufname = vim.fn.bufname()
+  local bufname = vim.api.nvim_buf_get_name(0)
   local stick = config.buftype[vim.bo.buftype]
     or config.wintype[M.get_win_type()]
     or config.filetype[vim.bo.filetype]
@@ -36,7 +36,6 @@ M.get_stick_type = function()
 end
 
 M.is_sticky_win = function(winid)
-  winid = winid or vim.api.nvim_get_current_win()
   local ok, bufnr = pcall(vim.api.nvim_win_get_var, winid or 0, "sticky_original_bufnr")
   return ok and vim.api.nvim_buf_is_valid(bufnr)
 end
@@ -83,6 +82,15 @@ M.restore_bufhidden = function()
     augroup END
     ]])
   end
+end
+
+M.is_buf_in_any_win = function(bufnr)
+  for _, winid in ipairs(vim.api.nvim_list_wins()) do
+    if bufnr == vim.api.nvim_win_get_buf(winid) then
+      return true
+    end
+  end
+  return false
 end
 
 return M
