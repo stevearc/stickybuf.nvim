@@ -25,6 +25,7 @@ local Config = {
   filetype = {
     aerial = "filetype",
     nerdtree = "filetype",
+    ['neotest-summary'] = "filetype",
   },
   bufname = {
     ["Neogit.*Popup"] = "bufnr",

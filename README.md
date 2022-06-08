@@ -23,6 +23,7 @@ Stickybuf provides built-in support for:
 - [fern](https://github.com/lambdalisue/fern.vim)
 - [aerial](https://github.com/stevearc/aerial.nvim)
 - [neogit](https://github.com/TimUntersberger/neogit)
+- [neotest](https://github.com/rcarriga/neotest)
 
 If there is another project that you would like to add out-of-the-box support
 for, submit a pull request with a change to [the default config
@@ -69,6 +70,7 @@ require("stickybuf").setup({
   filetype = {
     aerial = "filetype",
     nerdtree = "filetype",
+    ['neotest-summary'] = "filetype",
   },
   bufname = {
     ["Neogit.*Popup"] = "bufnr",
