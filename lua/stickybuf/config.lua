@@ -25,6 +25,7 @@ local Config = {
   filetype = {
     aerial = "filetype",
     nerdtree = "filetype",
+    toggleterm = "filetype",
     ['neotest-summary'] = "filetype",
   },
   bufname = {
