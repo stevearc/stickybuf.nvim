@@ -15,7 +15,7 @@ local Config = {
   },
   wintype = {
     autocmd  = false,
-    popup    = "bufnr",
+    popup    = false,
     preview  = false,
     command  = false,
     [""]     = false,
