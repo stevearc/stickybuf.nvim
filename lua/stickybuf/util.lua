@@ -16,7 +16,7 @@ M.get_win_type = function()
   end
 end
 
-M.get_stick_type = function()
+M.get_stick_info = function()
   if M.is_empty_buffer() then
     return nil
   end
@@ -26,11 +26,11 @@ M.get_stick_type = function()
     or config.filetype[vim.bo.filetype]
     or config.bufname[bufname]
   if stick then
-    return stick
+    return type(stick) == "table" and stick or { stick }
   end
   for pattern, mode in pairs(config.bufname) do
     if string.find(bufname, pattern) == 1 then
-      return mode
+      return type(mode) == "table" and mode or { mode }
     end
   end
 end

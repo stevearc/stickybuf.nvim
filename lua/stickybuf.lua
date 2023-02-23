@@ -21,7 +21,7 @@ local function _on_buf_enter()
   if util.is_empty_buffer() then
     return
   end
-  local stick_type = util.get_stick_type()
+  local stick_info = util.get_stick_info()
   if not util.is_sticky_match() then
     -- If this was a sticky buffer window and the buffer no longer matches, restore it
     util.override_bufhidden()
@@ -32,14 +32,20 @@ local function _on_buf_enter()
     vim.defer_fn(function()
       open_in_best_window(newbuf)
       util.restore_bufhidden()
+      if vim.w[winid].sticky_callback then
+        vim.w[winid].sticky_callback()
+      end
     end, 1)
-  elseif stick_type then
+  elseif stick_info then
+    local stick_type = stick_info[1]
+    local stick_callback = stick_info.callback
+
     if stick_type == "bufnr" then
-      M.pin_buffer()
+      M.pin_buffer(false, stick_callback)
     elseif stick_type == "buftype" then
-      M.pin_buftype()
+      M.pin_buftype(false, stick_callback)
     elseif stick_type == "filetype" then
-      M.pin_filetype()
+      M.pin_filetype(false, stick_callback)
     else
       error(string.format("Unknown sticky buf type '%s'", stick_type))
     end
@@ -94,28 +100,31 @@ local function already_pinned(bang, cmd)
   M.unpin_buffer(true)
 end
 
-M.pin_buffer = function(bang)
+M.pin_buffer = function(bang, callback)
   if already_pinned(bang, "PinBuffer") then
     return
   end
+  vim.w.sticky_callback = callback
   vim.w.sticky_original_bufnr = vim.api.nvim_get_current_buf()
   vim.w.sticky_bufnr = vim.api.nvim_get_current_buf()
   util.override_bufhidden()
 end
 
-M.pin_buftype = function(bang)
+M.pin_buftype = function(bang, callback)
   if already_pinned(bang, "PinBuftype") then
     return
   end
+  vim.w.sticky_callback = callback
   vim.w.sticky_original_bufnr = vim.api.nvim_get_current_buf()
   vim.w.sticky_buftype = vim.bo.buftype
   util.override_bufhidden()
 end
 
-M.pin_filetype = function(bang)
+M.pin_filetype = function(bang, callback)
   if already_pinned(bang, "PinFiletype") then
     return
   end
+  vim.w.sticky_callback = callback
   vim.w.sticky_original_bufnr = vim.api.nvim_get_current_buf()
   vim.w.sticky_filetype = vim.bo.filetype
   util.override_bufhidden()
