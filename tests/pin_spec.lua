@@ -1,4 +1,5 @@
 require("plenary.async").tests.add_to_env()
+local stickybuf = require("stickybuf")
 local test_util = require("tests.test_util")
 
 a.describe("stickybuf", function()
@@ -125,5 +126,21 @@ a.describe("stickybuf", function()
       assert.equals(2, #vim.api.nvim_tabpage_list_wins(0))
       assert.equals(foo_bufnr, vim.api.nvim_win_get_buf(winid))
     end)
+  end)
+
+  a.it("Calls the restore_callback after restoring a buffer", function()
+    vim.cmd.edit({ args = { "README.md" } })
+    local winid = vim.api.nvim_get_current_win()
+    local readme_bufnr = vim.api.nvim_get_current_buf()
+    local restore_called_in_win
+    stickybuf.pin(0, {
+      restore_callback = function(restore_win)
+        restore_called_in_win = restore_win
+      end,
+    })
+    local license_bufnr = vim.fn.bufadd("LICENSE")
+    vim.cmd.edit({ args = { "LICENSE" } })
+    a.util.sleep(10)
+    assert.equals(winid, restore_called_in_win)
   end)
 end)

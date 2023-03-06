@@ -33,6 +33,9 @@ local function _on_buf_enter(bufnr)
       vim.defer_fn(function()
         open_in_best_window(bufnr)
         util.restore_bufhidden(bufnr)
+        if sticky_conf.restore_callback then
+          sticky_conf.restore_callback(winid)
+        end
       end, 1)
     else
       -- This was a sticky window and the new buffer does match
@@ -97,6 +100,7 @@ end
 ---@param opts nil|table
 ---    allow nil|fun(bufnr: integer): boolean Return true to allow switching to the buffer
 ---    allow_type nil|"bufnr"|"buftype"|"filetype" Allow switching to buffers with a matching value
+---    restore_callback nil|fun(winid: integer) Called after a buffer is restored into the pinned window
 ---@note
 --- You cannot specify both 'allow' and 'allow_type'
 M.pin = function(winid, opts)
