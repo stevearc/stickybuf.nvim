@@ -1,0 +1,95 @@
+*stickybuf.txt*
+*Stickybuf* *stickybuf* *stickybuf.nvim*
+--------------------------------------------------------------------------------
+CONTENTS                                                      *stickybuf-contents*
+
+  1. Commands.............................................|stickybuf-commands|
+  2. Api.......................................................|stickybuf-api|
+  3. Options...............................................|stickybuf-options|
+
+--------------------------------------------------------------------------------
+COMMANDS                                                      *stickybuf-commands*
+
+PinBuffer[!]                                                          *:PinBuffer*
+    Pin the current buffer to the current window
+
+PinBuftype[!]                                                        *:PinBuftype*
+    Pin the buffer in the current window, but allow other buffers with the same
+    buftype
+
+PinFiletype[!]                                                      *:PinFiletype*
+    Pin the buffer in the current window, but allow other buffers with the same
+    filetype
+
+Unpin                                                                     *:Unpin*
+    Remove pinning for the current window
+
+--------------------------------------------------------------------------------
+API                                                                *stickybuf-api*
+
+pin({winid}, {opts})                                               *stickybuf.pin*
+    Pin the buffer in the specified window
+
+    Parameters:
+      {winid} `nil|integer`
+      {opts}  `nil|table`
+          {allow}      `nil|fun(bufnr: integer): boolean` Return true to allow
+                       switching to the buffer
+          {allow_type} `nil|"bufnr"|"buftype"|"filetype"` Allow switching to
+                       buffers with a matching value
+
+    Note:
+      You cannot specify both 'allow' and 'allow_type'
+
+unpin({winid})                                                   *stickybuf.unpin*
+    Remove any pinning logic for the window
+
+    Parameters:
+      {winid} `nil|integer`
+
+is_pinned({winid}): boolean                                  *stickybuf.is_pinned*
+
+    Parameters:
+      {winid} `nil|integer`
+
+setup({opts})                                                    *stickybuf.setup*
+
+    Parameters:
+      {opts} `nil|table`
+
+should_auto_pin({bufnr}): nil|"bufnr"|"buftype"|"filetype" *stickybuf.should_auto_pin*
+    The default function for config.get_auto_pin
+
+    Parameters:
+      {bufnr} `integer`
+
+--------------------------------------------------------------------------------
+OPTIONS                                                        *stickybuf-options*
+
+>
+    require("stickybuf").setup({
+      -- This function is run on BufEnter to determine pinning should be activated
+      get_auto_pin = function(bufnr)
+        -- You can return "bufnr", "buftype", "filetype", or a custom function to set how the window will be pinned
+        -- The function below encompasses the default logic. Inspect the source to see what it does.
+        return require("stickybuf").should_auto_pin(bufnr)
+      end
+    })
+<
+
+You can also use autocmd to pin buffers conditionally
+
+>
+    vim.api.nvim_create_autocmd("BufEnter", {
+      desc = "Pin the buffer to any window that is fixed width or height",
+      callback = function(args)
+        local stickybuf = require("stickybuf")
+        if not stickybuf.is_pinned() and (vim.wo.winfixwidth or vim.wo.winfixheight) then
+          stickybuf.pin()
+        end
+      end
+    })
+<
+
+================================================================================
+vim:tw=80:ts=2:ft=help:norl:syntax=help:

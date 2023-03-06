@@ -12,6 +12,19 @@ provide a solution with plugins. Stickybuf allows you to pin a window to a
 specific buffer, buftype, or filetype. Anything that opens a non-matching buffer
 in that window will be reverted and re-routed to the nearest available window.
 
+<!-- TOC -->
+
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Quick start](#quick-start)
+- [Commands](#commands)
+- [API](#api)
+- [Configuration](#configuration)
+- [Plugin support](#plugin-support)
+- [How does it work?](#how-does-it-work)
+
+<!-- /TOC -->
+
 ## Requirements
 
 - Neovim 0.8+
@@ -92,82 +105,96 @@ require("stickybuf").setup()
 
 ## Commands
 
-| Command          | description                                                                               |
-| ---------------- | ----------------------------------------------------------------------------------------- |
-| `PinBuffer[!]`   | Pin the current buffer to the window.                                                     |
-| `PinBuftype[!]`  | Pin the current buftype to the window. It will allow any buffers with the same buftype.   |
-| `PinFiletype[!]` | Pin the current filetype to the window. It will allow any buffers with the same filetype. |
-| `UnpinBuffer`    | Remove any type of pinning from the current window.                                       |
+| Command          | Description                                                                          |
+| ---------------- | ------------------------------------------------------------------------------------ |
+| `PinBuffer[!]`   | Pin the current buffer to the current window                                         |
+| `PinBuftype[!]`  | Pin the buffer in the current window, but allow other buffers with the same buftype  |
+| `PinFiletype[!]` | Pin the buffer in the current window, but allow other buffers with the same filetype |
+| `Unpin`          | Remove pinning for the current window                                                |
 
 ## API
 
+<!-- API -->
+
 ### pin(winid, opts)
 
-`select(opts)` \
-Select the entry under the cursor
+`pin(winid, opts)` \
+Pin the buffer in the specified window
 
-| Param | Type           | Desc                                               |                                       |
-| ----- | -------------- | -------------------------------------------------- | ------------------------------------- |
-| winid | `nil\|integer` | The window to pin                                  |                                       |
-| opts  | `table`        |                                                    |                                       |
-|       | vertical       | `boolean`                                          | Open the buffer in a vertical split   |
-|       | horizontal     | `boolean`                                          | Open the buffer in a horizontal split |
-|       | split          | `"aboveleft"\|"belowright"\|"topleft"\|"botright"` | Split modifier                        |
-|       | preview        | `boolean`                                          | Open the buffer in a preview window   |
-|       | tab            | `boolean`                                          | Open the buffer in a new tab          |
+| Param | Type           | Desc                                  |                                                  |
+| ----- | -------------- | ------------------------------------- | ------------------------------------------------ |
+| winid | `nil\|integer` |                                       |                                                  |
+| opts  | `nil\|table`   |                                       |                                                  |
+|       | allow          | `nil\|fun(bufnr: integer): boolean`   | Return true to allow switching to the buffer     |
+|       | allow_type     | `nil\|"bufnr"\|"buftype"\|"filetype"` | Allow switching to buffers with a matching value |
+
+**Note:**
+<pre>
+You cannot specify both 'allow' and 'allow_type'
+</pre>
+
+### unpin(winid)
+
+`unpin(winid)` \
+Remove any pinning logic for the window
+
+| Param | Type           | Desc |
+| ----- | -------------- | ---- |
+| winid | `nil\|integer` |      |
+
+### is_pinned(winid)
+
+`is_pinned(winid): boolean`
+
+| Param | Type           | Desc |
+| ----- | -------------- | ---- |
+| winid | `nil\|integer` |      |
+
+### setup(opts)
+
+`setup(opts)`
+
+| Param | Type         | Desc |
+| ----- | ------------ | ---- |
+| opts  | `nil\|table` |      |
+
+### should_auto_pin(bufnr)
+
+`should_auto_pin(bufnr): nil|"bufnr"|"buftype"|"filetype"` \
+The default function for config.get_auto_pin
+
+| Param | Type      | Desc |
+| ----- | --------- | ---- |
+| bufnr | `integer` |      |
+
+
+<!-- /API -->
 
 ## Configuration
 
 ```lua
 require("stickybuf").setup({
-  -- 'bufnr' will pin the exact buffer (PinBuffer)
-  -- 'buftype' will pin the buffer type (PinBuftype)
-  -- 'filetype' will pin the filetype (PinFiletype)
-  buftype = {
-    [""]     = false,
-    acwrite  = false,
-    help     = "buftype",
-    nofile   = false,
-    nowrite  = false,
-    quickfix = "buftype",
-    terminal = false,
-    prompt   = "bufnr",
-  },
-  wintype = {
-    autocmd  = false,
-    popup    = "bufnr",
-    preview  = false,
-    command  = false,
-    [""]     = false,
-    unknown  = false,
-    floating = false,
-  },
-  filetype = {
-    aerial = "filetype",
-    nerdtree = "filetype",
-    ['neotest-summary'] = "filetype",
-  },
-  bufname = {
-    ["Neogit.*Popup"] = "bufnr",
-  },
-  -- Some autocmds for plugins that need a bit more logic
-  -- Set to `false` to disable the autocmd
-  autocmds = {
-    -- Only pin defx if it was opened as a split (has fixed height/width)
-    defx = [[au FileType defx if &winfixwidth || &winfixheight | silent! PinFiletype | endif]],
-    -- Only pin fern if it was opened as a split (has fixed height/width)
-    fern = [[au FileType fern if &winfixwidth || &winfixheight | silent! PinFiletype | endif]],
-    -- Only pin neogit if it was opened as a split (there is more than one window)
-    neogit = [[au FileType NeogitStatus,NeogitLog,NeogitGitCommandHistory if winnr('$') > 1 | silent! PinFiletype | endif]],
-  }
+  -- This function is run on BufEnter to determine pinning should be activated
+  get_auto_pin = function(bufnr)
+    -- You can return "bufnr", "buftype", "filetype", or a custom function to set how the window will be pinned
+    -- The function below encompasses the default logic. Inspect the source to see what it does.
+    return require("stickybuf").should_auto_pin(bufnr)
+  end
 })
 ```
 
 You can also use autocmd to pin buffers conditionally
 
-```vim
-" Pin the buffer to any window that is fixed width or height
-autocmd BufEnter * if &winfixwidth || &winfixheight | silent! PinBuffer | endif
+```lua
+vim.api.nvim_create_autocmd("BufEnter", {
+  desc = "Pin the buffer to any window that is fixed width or height",
+  callback = function(args)
+    local stickybuf = require("stickybuf")
+    if not stickybuf.is_pinned() and (vim.wo.winfixwidth or vim.wo.winfixheight) then
+      stickybuf.pin()
+    end
+  end
+})
 ```
 
 ## Plugin support

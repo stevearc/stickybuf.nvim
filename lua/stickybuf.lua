@@ -56,38 +56,6 @@ local function _on_buf_enter(bufnr)
   end
 end
 
----The default function for config.get_auto_pin
----@param bufnr integer
----@return nil|"bufnr"|"buftype"|"filetype"
-M.should_auto_pin = function(bufnr)
-  local buftype = vim.bo[bufnr].buftype
-  local filetype = vim.bo[bufnr].filetype
-  local bufname = vim.api.nvim_buf_get_name(bufnr)
-  if buftype == "help" or buftype == "quickfix" then
-    return "buftype"
-  elseif buftype == "prompt" then
-    return "bufnr"
-  elseif filetype == "aerial" or filetype == "nerdtree" or filetype == "neotest-summary" then
-    return "filetype"
-  elseif bufname:match("Neogit.*Popup") then
-    return "bufnr"
-  elseif filetype == "defx" and (vim.wo.winfixwidth or vim.wo.winfixheight) then
-    -- Only pin defx if it was opened as a split (has fixed height/width)
-    return "filetype"
-  elseif filetype == "fern" and (vim.wo.winfixwidth or vim.wo.winfixheight) then
-    -- Only pin fern if it was opened as a split (has fixed height/width)
-    return "filetype"
-  elseif
-    filetype == "NeogitStatus"
-    or filetype == "NeogitLog"
-    or filetype == "NeogitGitCommandHistory"
-  then
-    if vim.fn.winnr("$") > 1 then
-      return "filetype"
-    end
-  end
-end
-
 ---@deprecated
 ---@param bang ""|"!"
 M.pin_buffer = function(bang)
@@ -189,6 +157,89 @@ M.unpin_buffer = function(keep_bufhidden)
   M.unpin()
 end
 
+local commands = {
+  {
+    cmd = "PinBuffer",
+    callback = function(args)
+      if args.bang or not M.is_pinned() then
+        M.pin()
+      end
+    end,
+    def = {
+      desc = "Pin the current buffer to the current window",
+      bang = true,
+      bar = true,
+    },
+  },
+  {
+    cmd = "PinBuftype",
+    callback = function(args)
+      if args.bang or not M.is_pinned() then
+        M.pin(0, { allow_type = "buftype" })
+      end
+    end,
+    def = {
+      desc = "Pin the buffer in the current window, but allow other buffers with the same buftype",
+      bang = true,
+      bar = true,
+    },
+  },
+  {
+    cmd = "PinFiletype",
+    callback = function(args)
+      if args.bang or not M.is_pinned() then
+        M.pin(0, { allow_type = "filetype" })
+      end
+    end,
+    def = {
+      desc = "Pin the buffer in the current window, but allow other buffers with the same filetype",
+      bang = true,
+      bar = true,
+    },
+  },
+  {
+    cmd = "UnpinBuffer",
+    deprecated = true,
+    callback = function(args)
+      vim.notify_once(
+        "Deprecated[UnpinBuffer] use :Unpin instead.\nThis command will be removed on 2023-07-01",
+        vim.log.levels.WARN
+      )
+      M.unpin()
+    end,
+    def = {
+      desc = "[Deprecated] Remove pinning for the current window",
+      bar = true,
+    },
+  },
+  {
+    cmd = "Unpin",
+    callback = function(args)
+      M.unpin()
+    end,
+    def = {
+      desc = "Remove pinning for the current window",
+      bar = true,
+    },
+  },
+}
+
+---Used for documentation generation
+---@private
+M.get_all_commands = function()
+  local cmds = vim.deepcopy(commands)
+  for _, v in ipairs(cmds) do
+    v.callback = nil
+    -- Remove all function values from the command definition so we can serialize it
+    for k, param in pairs(v.def) do
+      if type(param) == "function" then
+        v.def[k] = nil
+      end
+    end
+  end
+  return cmds
+end
+
 M._has_setup = false
 
 ---@param opts nil|table
@@ -200,6 +251,12 @@ M.setup = function(opts)
       vim.log.levels.ERROR
     )
     return
+  end
+  if opts and not opts.get_auto_pin and not vim.tbl_isempty(opts) then
+    vim.notify_once(
+      "stickybuf has completely changed its setup() options. Please see :help stickybuf-options for the new format.",
+      vim.log.levels.ERROR
+    )
   end
   config = vim.tbl_deep_extend("keep", opts or {}, {
     get_auto_pin = M.should_auto_pin,
@@ -219,26 +276,41 @@ M.setup = function(opts)
     end,
   })
 
-  vim.api.nvim_create_user_command("PinBuffer", function(args)
-    if args.bang or not M.is_pinned() then
-      M.pin()
+  for _, v in pairs(commands) do
+    vim.api.nvim_create_user_command(v.cmd, v.callback, v.def)
+  end
+end
+
+---The default function for config.get_auto_pin
+---@param bufnr integer
+---@return nil|"bufnr"|"buftype"|"filetype"
+M.should_auto_pin = function(bufnr)
+  local buftype = vim.bo[bufnr].buftype
+  local filetype = vim.bo[bufnr].filetype
+  local bufname = vim.api.nvim_buf_get_name(bufnr)
+  if buftype == "help" or buftype == "quickfix" then
+    return "buftype"
+  elseif buftype == "prompt" then
+    return "bufnr"
+  elseif filetype == "aerial" or filetype == "nerdtree" or filetype == "neotest-summary" then
+    return "filetype"
+  elseif bufname:match("Neogit.*Popup") then
+    return "bufnr"
+  elseif filetype == "defx" and (vim.wo.winfixwidth or vim.wo.winfixheight) then
+    -- Only pin defx if it was opened as a split (has fixed height/width)
+    return "filetype"
+  elseif filetype == "fern" and (vim.wo.winfixwidth or vim.wo.winfixheight) then
+    -- Only pin fern if it was opened as a split (has fixed height/width)
+    return "filetype"
+  elseif
+    filetype == "NeogitStatus"
+    or filetype == "NeogitLog"
+    or filetype == "NeogitGitCommandHistory"
+  then
+    if vim.fn.winnr("$") > 1 then
+      return "filetype"
     end
-  end, { bar = true, bang = true })
-  vim.api.nvim_create_user_command("PinBuftype", function(args)
-    if args.bang or not M.is_pinned() then
-      M.pin(0, { allow_type = "buftype" })
-    end
-  end, { bar = true, bang = true })
-  vim.api.nvim_create_user_command("PinFiletype", function(args)
-    if args.bang or not M.is_pinned() then
-      M.pin(0, { allow_type = "filetype" })
-    end
-  end, { bar = true, bang = true })
-  vim.api.nvim_create_user_command("UnpinBuffer", function()
-    M.unpin()
-  end, {
-    desc = "Remove pinning for the current buffer",
-  })
+  end
 end
 
 return M
