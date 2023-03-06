@@ -18,6 +18,12 @@ M.is_sticky_win = function(winid)
   return ok and vim.api.nvim_buf_is_valid(bufnr)
 end
 
+---@param winid nil|integer
+---@return boolean
+M.is_floating_win = function(winid)
+  return vim.api.nvim_win_get_config(winid or 0).relative ~= ""
+end
+
 ---@return boolean
 M.is_sticky_match = function()
   if not M.is_sticky_win() then

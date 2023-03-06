@@ -7,7 +7,7 @@ local function open_in_best_window(bufnr)
   -- Open the buffer in the first window that doesn't have a sticky buffer
   for winnr = 1, vim.fn.winnr("$") do
     local winid = vim.fn.win_getid(winnr)
-    if not M.is_pinned(winid) then
+    if not M.is_pinned(winid) and not util.is_floating_win(winid) then
       vim.cmd.wincmd({ count = winnr, args = { "w" } })
       vim.cmd.buffer({ args = { bufnr } })
       return
