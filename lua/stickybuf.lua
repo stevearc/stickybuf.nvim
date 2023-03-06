@@ -2,6 +2,7 @@ local config = require("stickybuf.config")
 local util = require("stickybuf.util")
 local M = {}
 
+---@param bufnr integer
 local function open_in_best_window(bufnr)
   -- Open the buffer in the first window that doesn't have a sticky buffer
   for winnr = 1, vim.fn.winnr("$") do
@@ -46,38 +47,8 @@ local function _on_buf_enter()
   end
 end
 
-M.on_buf_enter = function()
-  -- Delay just in case the buffer is blank when entered but some process is
-  -- about to set all the filetype/buftype/etc options
-  vim.defer_fn(_on_buf_enter, 5)
-end
-
-M.on_buf_hidden = function(bufnr)
-  local ok, prev_bufhidden = pcall(vim.api.nvim_buf_get_var, bufnr, "prev_bufhidden")
-  if ok then
-    -- Set nomodified on the buffer. If we try to quit nvim shortly after
-    -- leaving a modified buffer (e.g. a Telescope prompt), nvim will NOT quit
-    -- and instead inform you that you have modified buffers to take care of.
-    -- To avoid that we set nomodified, and restore the previous modified state
-    -- if we end up not garbage collecting this buffer.
-    -- (see https://github.com/stevearc/stickybuf.nvim/pull/6)
-    local was_modified = vim.api.nvim_buf_get_option(bufnr, "modified")
-    if was_modified then
-      vim.api.nvim_buf_set_option(bufnr, "modified", false)
-    end
-    -- We need a long delay for this to make sure we're not going to restore this buffer
-    vim.defer_fn(function()
-      if vim.api.nvim_buf_is_valid(bufnr) then
-        if util.is_buf_in_any_win(bufnr) then
-          vim.api.nvim_buf_set_option(bufnr, "modified", was_modified)
-        else
-          vim.cmd(string.format("silent! b%s! %d", prev_bufhidden, bufnr))
-        end
-      end
-    end, 1000)
-  end
-end
-
+---@param bang ""|"!"
+---@param cmd string
 local function already_pinned(bang, cmd)
   if util.is_sticky_win() then
     if bang == "" then
@@ -94,6 +65,7 @@ local function already_pinned(bang, cmd)
   M.unpin_buffer(true)
 end
 
+---@param bang ""|"!"
 M.pin_buffer = function(bang)
   if already_pinned(bang, "PinBuffer") then
     return
@@ -103,6 +75,7 @@ M.pin_buffer = function(bang)
   util.override_bufhidden()
 end
 
+---@param bang ""|"!"
 M.pin_buftype = function(bang)
   if already_pinned(bang, "PinBuftype") then
     return
@@ -112,6 +85,7 @@ M.pin_buftype = function(bang)
   util.override_bufhidden()
 end
 
+---@param bang ""|"!"
 M.pin_filetype = function(bang)
   if already_pinned(bang, "PinFiletype") then
     return
@@ -121,6 +95,7 @@ M.pin_filetype = function(bang)
   util.override_bufhidden()
 end
 
+---@param keep_bufhidden boolean
 M.unpin_buffer = function(keep_bufhidden)
   vim.w.sticky_original_bufnr = nil
   vim.w.sticky_bufnr = nil
@@ -131,24 +106,39 @@ M.unpin_buffer = function(keep_bufhidden)
   end
 end
 
+---@param opts nil|table
 M.setup = function(opts)
+  if vim.fn.has("nvim-0.8") == 0 then
+    vim.notify_once(
+      "stickybuf has dropped support for Neovim <0.8. Please use the nvim-0.6 branch or upgrade Neovim",
+      vim.log.levels.ERROR
+    )
+    return
+  end
   config:update(opts)
-  vim.cmd([[
-  augroup StickyBuf
-    au!
-    autocmd BufEnter * lua require'stickybuf'.on_buf_enter()
-  augroup END
-  ]])
-  vim.cmd(
-    [[command! -bar -bang PinBuffer call luaeval("require'stickybuf'.pin_buffer(_A)", expand('<bang>'))]]
-  )
-  vim.cmd(
-    [[command! -bar -bang PinBuftype call luaeval("require'stickybuf'.pin_buftype(_A)", expand('<bang>'))]]
-  )
-  vim.cmd(
-    [[command! -bar -bang PinFiletype call luaeval("require'stickybuf'.pin_filetype(_A)", expand('<bang>'))]]
-  )
-  vim.cmd([[command! -bar UnpinBuffer lua require'stickybuf'.unpin_buffer()]])
+  local aug = vim.api.nvim_create_augroup("Stickybuf", {})
+  vim.api.nvim_create_autocmd("BufEnter", {
+    desc = "Restore pinned buffer, if necessary",
+    group = aug,
+    callback = function()
+      -- Delay just in case the buffer is blank when entered but some process is
+      -- about to set all the filetype/buftype/etc options
+      vim.defer_fn(_on_buf_enter, 5)
+    end,
+  })
+
+  vim.api.nvim_create_user_command("PinBuffer", function(args)
+    M.pin_buffer(args.bang and "!" or "")
+  end, { bar = true, bang = true })
+  vim.api.nvim_create_user_command("PinBuftype", function(args)
+    M.pin_buftype(args.bang and "!" or "")
+  end, { bar = true, bang = true })
+  vim.api.nvim_create_user_command("PinFiletype", function(args)
+    M.pin_filetype(args.bang and "!" or "")
+  end, { bar = true, bang = true })
+  vim.api.nvim_create_user_command("UnpinBuffer", M.unpin_buffer, {
+    desc = "Remove pinning for the current buffer",
+  })
   local cmd = [[augroup StickyBufIntegration
     au!
   ]]
