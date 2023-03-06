@@ -2,6 +2,7 @@ require("plenary.async").tests.add_to_env()
 local M = {}
 
 M.reset_editor = function()
+  vim.cmd.tabnew()
   vim.cmd.tabonly({ mods = { silent = true } })
   for i, winid in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
     if i > 1 then

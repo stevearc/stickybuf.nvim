@@ -12,22 +12,83 @@ provide a solution with plugins. Stickybuf allows you to pin a window to a
 specific buffer, buftype, or filetype. Anything that opens a non-matching buffer
 in that window will be reverted and re-routed to the nearest available window.
 
-## Support
+## Requirements
 
-Stickybuf provides built-in support for:
+- Neovim 0.8+
 
-- quickfix
-- help
-- [NERDtree](https://github.com/preservim/nerdtree)
-- [defx](https://github.com/Shougo/defx.nvim)
-- [fern](https://github.com/lambdalisue/fern.vim)
-- [aerial](https://github.com/stevearc/aerial.nvim)
-- [neogit](https://github.com/TimUntersberger/neogit)
-- [neotest](https://github.com/rcarriga/neotest)
+## Installation
 
-If there is another project that you would like to add out-of-the-box support
-for, submit a pull request with a change to [the default config
-file](https://github.com/stevearc/stickybuf.nvim/blob/master/lua/stickybuf/config.lua)
+stickybuf.nvim supports all the usual plugin managers
+
+<details>
+  <summary>Packer</summary>
+
+```lua
+require('packer').startup(function()
+    use {
+      'stevearc/stickybuf.nvim',
+      config = function() require('stickybuf').setup() end
+    }
+end)
+```
+
+</details>
+
+<details>
+  <summary>Paq</summary>
+
+```lua
+require "paq" {
+    {'stevearc/stickybuf.nvim'};
+}
+```
+
+</details>
+
+<details>
+  <summary>vim-plug</summary>
+
+```vim
+Plug 'stevearc/stickybuf.nvim'
+```
+
+</details>
+
+<details>
+  <summary>dein</summary>
+
+```vim
+call dein#add('stevearc/stickybuf.nvim')
+```
+
+</details>
+
+<details>
+  <summary>Pathogen</summary>
+
+```sh
+git clone --depth=1 https://github.com/stevearc/stickybuf.nvim.git ~/.vim/bundle/
+```
+
+</details>
+
+<details>
+  <summary>Neovim native package</summary>
+
+```sh
+git clone --depth=1 https://github.com/stevearc/stickybuf.nvim.git \
+  "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/pack/stickybuf/start/stickybuf.nvim
+```
+
+</details>
+
+## Quick start
+
+Add the following to your init.lua
+
+```lua
+require("stickybuf").setup()
+```
 
 ## Commands
 
@@ -38,10 +99,24 @@ file](https://github.com/stevearc/stickybuf.nvim/blob/master/lua/stickybuf/confi
 | `PinFiletype[!]` | Pin the current filetype to the window. It will allow any buffers with the same filetype. |
 | `UnpinBuffer`    | Remove any type of pinning from the current window.                                       |
 
-## Configuration
+## API
 
-You don't need to do anything but install for the default behavior. If you want
-to customize the behavior, you can pass a config object into `setup()`:
+### pin(winid, opts)
+
+`select(opts)` \
+Select the entry under the cursor
+
+| Param | Type           | Desc                                               |                                       |
+| ----- | -------------- | -------------------------------------------------- | ------------------------------------- |
+| winid | `nil\|integer` | The window to pin                                  |                                       |
+| opts  | `table`        |                                                    |                                       |
+|       | vertical       | `boolean`                                          | Open the buffer in a vertical split   |
+|       | horizontal     | `boolean`                                          | Open the buffer in a horizontal split |
+|       | split          | `"aboveleft"\|"belowright"\|"topleft"\|"botright"` | Split modifier                        |
+|       | preview        | `boolean`                                          | Open the buffer in a preview window   |
+|       | tab            | `boolean`                                          | Open the buffer in a new tab          |
+
+## Configuration
 
 ```lua
 require("stickybuf").setup({
@@ -94,6 +169,23 @@ You can also use autocmd to pin buffers conditionally
 " Pin the buffer to any window that is fixed width or height
 autocmd BufEnter * if &winfixwidth || &winfixheight | silent! PinBuffer | endif
 ```
+
+## Plugin support
+
+Stickybuf provides built-in support for:
+
+- quickfix
+- help
+- [NERDtree](https://github.com/preservim/nerdtree)
+- [defx](https://github.com/Shougo/defx.nvim)
+- [fern](https://github.com/lambdalisue/fern.vim)
+- [aerial](https://github.com/stevearc/aerial.nvim)
+- [neogit](https://github.com/TimUntersberger/neogit)
+- [neotest](https://github.com/rcarriga/neotest)
+
+If there is another project that you would like to add out-of-the-box support
+for, submit a pull request with a change to [the default config
+file](https://github.com/stevearc/stickybuf.nvim/blob/master/lua/stickybuf/config.lua)
 
 ## How does it work?
 
