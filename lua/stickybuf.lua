@@ -8,9 +8,14 @@ local function open_in_best_window(bufnr)
   for winnr = 1, vim.fn.winnr("$") do
     local winid = vim.fn.win_getid(winnr)
     if not M.is_pinned(winid) and not util.is_floating_win(winid) then
-      vim.cmd.wincmd({ count = winnr, args = { "w" } })
-      vim.cmd.buffer({ args = { bufnr } })
-      return
+      -- Also have to make sure that the window wouldn't be auto-pinned. The auto-pin only
+      -- triggers on BufEnter, but we may have not entered the buffer yet (e.g. aerial)
+      -- See https://github.com/stevearc/stickybuf.nvim/issues/10
+      if not config.get_auto_pin(vim.api.nvim_win_get_buf(winid)) then
+        vim.cmd.wincmd({ count = winnr, args = { "w" } })
+        vim.cmd.buffer({ args = { bufnr } })
+        return
+      end
     end
   end
   -- If none exists, open the buffer in a vsplit from the first window
