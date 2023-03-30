@@ -210,6 +210,12 @@ Stickybuf provides built-in support for:
 - [aerial](https://github.com/stevearc/aerial.nvim)
 - [neogit](https://github.com/TimUntersberger/neogit)
 - [neotest](https://github.com/rcarriga/neotest)
+- [vim-startuptime](https://github.com/dstein64/vim-startuptime)
+- [toggleterm](https://github.com/akinsho/toggleterm.nvim)
+- [vim-fugitive](https://github.com/tpope/vim-fugitive)
+- [nvim-notify](https://github.com/rcarriga/nvim-notify)
+- [neo-tree](https://github.com/nvim-neo-tree/neo-tree.nvim)
+- [nvim-dap-ui](https://github.com/rcarriga/nvim-dap-ui)
 
 If there is another project that you would like to add out-of-the-box support
 for, submit a pull request with a change to [the default config

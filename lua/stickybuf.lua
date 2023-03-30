@@ -299,9 +299,19 @@ M.should_auto_pin = function(bufnr)
   local bufname = vim.api.nvim_buf_get_name(bufnr)
   if buftype == "help" or buftype == "quickfix" then
     return "buftype"
-  elseif buftype == "prompt" then
+  elseif buftype == "prompt" or vim.startswith(bufname, "DAP ") then
     return "bufnr"
-  elseif filetype == "aerial" or filetype == "nerdtree" or filetype == "neotest-summary" then
+  elseif
+    filetype == "aerial"
+    or filetype == "nerdtree"
+    or filetype == "neotest-summary"
+    or filetype == "startuptime"
+    or filetype == "toggleterm"
+    or filetype == "fugitive"
+    or filetype == "notify"
+    or filetype == "fugitiveblame"
+    or filetype == "neo-tree"
+  then
     return "filetype"
   elseif bufname:match("Neogit.*Popup") then
     return "bufnr"
