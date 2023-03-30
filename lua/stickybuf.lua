@@ -290,6 +290,18 @@ M.setup = function(opts)
   end
 end
 
+local builtin_supported_filetypes = {
+  "aerial",
+  "nerdtree",
+  "neotest-summary",
+  "startuptime",
+  "toggleterm",
+  "fugitive",
+  "notify",
+  "fugitiveblame",
+  "neo-tree",
+}
+
 ---The default function for config.get_auto_pin
 ---@param bufnr integer
 ---@return nil|"bufnr"|"buftype"|"filetype"
@@ -301,17 +313,7 @@ M.should_auto_pin = function(bufnr)
     return "buftype"
   elseif buftype == "prompt" or vim.startswith(bufname, "DAP ") then
     return "bufnr"
-  elseif
-    filetype == "aerial"
-    or filetype == "nerdtree"
-    or filetype == "neotest-summary"
-    or filetype == "startuptime"
-    or filetype == "toggleterm"
-    or filetype == "fugitive"
-    or filetype == "notify"
-    or filetype == "fugitiveblame"
-    or filetype == "neo-tree"
-  then
+  elseif vim.tbl_contains(builtin_supported_filetypes, filetype) then
     return "filetype"
   elseif bufname:match("Neogit.*Popup") then
     return "bufnr"
