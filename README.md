@@ -34,6 +34,18 @@ in that window will be reverted and re-routed to the nearest available window.
 stickybuf.nvim supports all the usual plugin managers
 
 <details>
+  <summary>lazy.nvim</summary>
+
+```lua
+{
+  'stevearc/stickybuf.nvim',
+  opts = {},
+}
+```
+
+</details>
+
+<details>
   <summary>Packer</summary>
 
 ```lua
