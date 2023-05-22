@@ -70,15 +70,15 @@ M.override_bufhidden = function(bufnr)
           -- To avoid that we set nomodified, and restore the previous modified state
           -- if we end up not garbage collecting this buffer.
           -- (see https://github.com/stevearc/stickybuf.nvim/pull/6)
-          local was_modified = vim.api.nvim_buf_get_option(args.buf, "modified")
+          local was_modified = vim.bo[args.buf].modified
           if was_modified then
-            vim.api.nvim_buf_set_option(args.buf, "modified", false)
+            vim.bo[args.buf].modified = false
           end
           -- We need a long delay for this to make sure we're not going to restore this buffer
           vim.defer_fn(function()
             if vim.api.nvim_buf_is_valid(args.buf) then
               if M.is_buf_in_any_win(args.buf) then
-                vim.api.nvim_buf_set_option(args.buf, "modified", was_modified)
+                vim.bo[args.buf].modified = was_modified
               else
                 vim.cmd(string.format("silent! b%s! %d", prev_bufhidden, args.buf))
               end
