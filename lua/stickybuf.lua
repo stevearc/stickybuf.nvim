@@ -300,6 +300,8 @@ local builtin_supported_filetypes = {
   "notify",
   "fugitiveblame",
   "neo-tree",
+  "GoogleKeepList",
+  "GoogleKeepMenu",
 }
 
 ---The default function for config.get_auto_pin

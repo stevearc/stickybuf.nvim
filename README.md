@@ -228,6 +228,7 @@ Stickybuf provides built-in support for:
 - [nvim-notify](https://github.com/rcarriga/nvim-notify)
 - [neo-tree](https://github.com/nvim-neo-tree/neo-tree.nvim)
 - [nvim-dap-ui](https://github.com/rcarriga/nvim-dap-ui)
+- [gkeep.nvim](https://github.com/stevearc/gkeep.nvim)
 
 If there is another project that you would like to add out-of-the-box support
 for, submit a pull request with a change to [the default config
