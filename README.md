@@ -142,6 +142,7 @@ Pin the buffer in the specified window
 |       | restore_callback | `nil\|fun(winid: integer)`            | Called after a buffer is restored into the pinned window |
 
 **Note:**
+
 <pre>
 You cannot specify both 'allow' and 'allow_type'
 </pre>
@@ -180,7 +181,6 @@ The default function for config.get_auto_pin
 | ----- | --------- | ---- |
 | bufnr | `integer` |      |
 
-
 <!-- /API -->
 
 ## Configuration
@@ -217,6 +217,7 @@ Stickybuf provides built-in support for:
 - quickfix
 - help
 - [NERDtree](https://github.com/preservim/nerdtree)
+- [nvim-tree](https://github.com/nvim-tree/nvim-tree.lua)
 - [defx](https://github.com/Shougo/defx.nvim)
 - [fern](https://github.com/lambdalisue/fern.vim)
 - [aerial](https://github.com/stevearc/aerial.nvim)
@@ -231,8 +232,9 @@ Stickybuf provides built-in support for:
 - [gkeep.nvim](https://github.com/stevearc/gkeep.nvim)
 
 If there is another project that you would like to add out-of-the-box support
-for, submit a pull request with a change to [the default config
-file](https://github.com/stevearc/stickybuf.nvim/blob/master/lua/stickybuf/config.lua)
+for, submit a pull request, it's likely you'd only need to update the
+`builtin_supported_filetypes` variable in [the main source
+file](https://github.com/stevearc/stickybuf.nvim/blob/master/lua/stickybuf.lua)
 
 ## How does it work?
 

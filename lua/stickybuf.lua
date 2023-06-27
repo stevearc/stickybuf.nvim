@@ -302,6 +302,7 @@ local builtin_supported_filetypes = {
   "neo-tree",
   "GoogleKeepList",
   "GoogleKeepMenu",
+  "NvimTree",
 }
 
 ---The default function for config.get_auto_pin
