@@ -142,7 +142,6 @@ Pin the buffer in the specified window
 |       | restore_callback | `nil\|fun(winid: integer)`            | Called after a buffer is restored into the pinned window |
 
 **Note:**
-
 <pre>
 You cannot specify both 'allow' and 'allow_type'
 </pre>
@@ -180,6 +179,7 @@ The default function for config.get_auto_pin
 | Param | Type      | Desc |
 | ----- | --------- | ---- |
 | bufnr | `integer` |      |
+
 
 <!-- /API -->
 
