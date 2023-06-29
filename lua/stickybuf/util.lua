@@ -83,7 +83,7 @@ M.override_bufhidden = function(bufnr)
                 vim.cmd(string.format("silent! b%s! %d", prev_bufhidden, args.buf))
               end
             end
-          end, 1000)
+          end, 100)
         end
       end,
     })
