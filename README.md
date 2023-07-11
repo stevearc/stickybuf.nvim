@@ -230,6 +230,7 @@ Stickybuf provides built-in support for:
 - [neo-tree](https://github.com/nvim-neo-tree/neo-tree.nvim)
 - [nvim-dap-ui](https://github.com/rcarriga/nvim-dap-ui)
 - [gkeep.nvim](https://github.com/stevearc/gkeep.nvim)
+- [Overseer](https://github.com/stevearc/overseer.nvim)
 
 If there is another project that you would like to add out-of-the-box support
 for, submit a pull request, it's likely you'd only need to update the
