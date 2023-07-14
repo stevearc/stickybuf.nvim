@@ -303,6 +303,7 @@ local builtin_supported_filetypes = {
   "GoogleKeepList",
   "GoogleKeepMenu",
   "NvimTree",
+  "OverseerList",
 }
 
 ---The default function for config.get_auto_pin
