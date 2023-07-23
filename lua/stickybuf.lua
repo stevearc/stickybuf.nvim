@@ -304,6 +304,7 @@ local builtin_supported_filetypes = {
   "GoogleKeepMenu",
   "NvimTree",
   "OverseerList",
+  "spectre_panel",
 }
 
 ---The default function for config.get_auto_pin
