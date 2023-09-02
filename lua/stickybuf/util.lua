@@ -67,6 +67,9 @@ M.override_bufhidden = function(bufnr)
       callback = function(args)
         local ok, prev_bufhidden = pcall(vim.api.nvim_buf_get_var, args.buf, "prev_bufhidden")
         if ok then
+          local name = vim.api.nvim_buf_get_name(args.buf)
+          vim.b[args.buf].prev_bufname = name
+          vim.api.nvim_buf_set_name(args.buf, name .. ' (' .. args.buf .. ')')
           -- Set nomodified on the buffer. If we try to quit nvim shortly after
           -- leaving a modified buffer (e.g. a Telescope prompt), nvim will NOT quit
           -- and instead inform you that you have modified buffers to take care of.
@@ -102,6 +105,12 @@ M.restore_bufhidden = function(bufnr)
   if prev_bufhidden then
     vim.bo[bufnr].bufhidden = prev_bufhidden
     vim.b[bufnr].prev_bufhidden = nil
+    local name = vim.b[bufnr].prev_bufname
+    if name then
+        vim.api.nvim_buf_set_name(bufnr, name)
+        vim.b[bufnr].prev_bufname = nil
+    end
+
     local group = vim.api.nvim_create_augroup("StickyBufOnHide", { clear = false })
     vim.api.nvim_clear_autocmds({
       buffer = bufnr,
