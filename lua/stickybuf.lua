@@ -2,6 +2,9 @@ local config = {}
 local util = require("stickybuf.util")
 local M = {}
 
+-- TODO remove after https://github.com/folke/neodev.nvim/pull/163 lands
+---@diagnostic disable: inject-field
+
 ---@param bufnr integer
 local function open_in_best_window(bufnr)
   -- Open the buffer in the first window that doesn't have a sticky buffer
