@@ -3,9 +3,9 @@
 --------------------------------------------------------------------------------
 CONTENTS                                                      *stickybuf-contents*
 
-  1. Commands.............................................|stickybuf-commands|
-  2. Api.......................................................|stickybuf-api|
-  3. Options...............................................|stickybuf-options|
+  1. Commands                                             |stickybuf-commands|
+  2. Api                                                       |stickybuf-api|
+  3. Options                                               |stickybuf-options|
 
 --------------------------------------------------------------------------------
 COMMANDS                                                      *stickybuf-commands*
@@ -68,7 +68,7 @@ should_auto_pin({bufnr}): nil|"bufnr"|"buftype"|"filetype" *stickybuf.should_aut
 --------------------------------------------------------------------------------
 OPTIONS                                                        *stickybuf-options*
 
->
+>lua
     require("stickybuf").setup({
       -- This function is run on BufEnter to determine pinning should be activated
       get_auto_pin = function(bufnr)
@@ -81,7 +81,7 @@ OPTIONS                                                        *stickybuf-option
 
 You can also use autocmd to pin buffers conditionally
 
->
+>lua
     vim.api.nvim_create_autocmd("BufEnter", {
       desc = "Pin the buffer to any window that is fixed width or height",
       callback = function(args)
