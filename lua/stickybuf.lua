@@ -330,11 +330,7 @@ M.should_auto_pin = function(bufnr)
   elseif filetype == "fern" and (vim.wo.winfixwidth or vim.wo.winfixheight) then
     -- Only pin fern if it was opened as a split (has fixed height/width)
     return "filetype"
-  elseif
-    filetype == "NeogitStatus"
-    or filetype == "NeogitLog"
-    or filetype == "NeogitGitCommandHistory"
-  then
+  elseif vim.startswith(filetype, "Neogit") then
     if vim.fn.winnr("$") > 1 then
       return "filetype"
     end
