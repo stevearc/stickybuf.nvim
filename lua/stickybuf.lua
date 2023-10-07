@@ -5,6 +5,10 @@ local M = {}
 -- TODO remove after https://github.com/folke/neodev.nvim/pull/163 lands
 ---@diagnostic disable: inject-field
 
+---@class (exact) stickybuf.WinPinConfig
+---@field allow fun(bufnr: integer): boolean
+---@field restore_callback? fun(winid: integer)
+
 ---@param bufnr integer
 local function open_in_best_window(bufnr)
   -- Open the buffer in the first window that doesn't have a sticky buffer
@@ -31,6 +35,7 @@ local function _on_buf_enter(bufnr)
     return
   end
   -- TODO remove after https://github.com/folke/neodev.nvim/pull/163 lands
+  ---@type stickybuf.WinPinConfig
   ---@diagnostic disable-next-line: undefined-field
   local sticky_conf = vim.w.sticky_win
   if sticky_conf then
