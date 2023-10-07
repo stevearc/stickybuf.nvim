@@ -81,42 +81,6 @@ local function _on_buf_enter(bufnr)
   end
 end
 
----@deprecated
----@param bang ""|"!"
-M.pin_buffer = function(bang)
-  vim.notify_once(
-    "Deprecated[stickybuf.pin_buffer] use stickybuf.pin instead\nThis function will be removed on 2023-07-01",
-    vim.log.levels.WARN
-  )
-  if bang == "!" or not M.is_pinned() then
-    M.pin()
-  end
-end
-
----@deprecated
----@param bang ""|"!"
-M.pin_buftype = function(bang)
-  vim.notify_once(
-    "Deprecated[stickybuf.pin_buftype] use stickybuf.pin instead\nThis function will be removed on 2023-07-01",
-    vim.log.levels.WARN
-  )
-  if bang == "!" or not M.is_pinned() then
-    M.pin(0, { allow_type = "buftype" })
-  end
-end
-
----@deprecated
----@param bang ""|"!"
-M.pin_filetype = function(bang)
-  vim.notify_once(
-    "Deprecated[stickybuf.pin_filetype] use stickybuf.pin instead\nThis function will be removed on 2023-07-01",
-    vim.log.levels.WARN
-  )
-  if bang == "!" or not M.is_pinned() then
-    M.pin(0, { allow_type = "filetype" })
-  end
-end
-
 ---Pin the buffer in the specified window
 ---@param winid nil|integer
 ---@param opts nil|table
@@ -174,16 +138,6 @@ M.is_pinned = function(winid)
   return vim.w[winid or 0].sticky_original_bufnr ~= nil
 end
 
----@deprecated
----@param keep_bufhidden boolean
-M.unpin_buffer = function(keep_bufhidden)
-  vim.notify_once(
-    "Deprecated[stickybuf.unpin_buffer] use stickybuf.unpin instead\nThis function will be removed on 2023-07-01",
-    vim.log.levels.WARN
-  )
-  M.unpin()
-end
-
 local commands = {
   {
     cmd = "PinBuffer",
@@ -221,21 +175,6 @@ local commands = {
     def = {
       desc = "Pin the buffer in the current window, but allow other buffers with the same filetype",
       bang = true,
-      bar = true,
-    },
-  },
-  {
-    cmd = "UnpinBuffer",
-    deprecated = true,
-    callback = function(args)
-      vim.notify_once(
-        "Deprecated[UnpinBuffer] use :Unpin instead.\nThis command will be removed on 2023-07-01",
-        vim.log.levels.WARN
-      )
-      M.unpin()
-    end,
-    def = {
-      desc = "[Deprecated] Remove pinning for the current window",
       bar = true,
     },
   },
