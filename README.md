@@ -133,13 +133,14 @@ require("stickybuf").setup()
 `pin(winid, opts)` \
 Pin the buffer in the specified window
 
-| Param | Type             | Desc                                  |                                                          |
-| ----- | ---------------- | ------------------------------------- | -------------------------------------------------------- |
-| winid | `nil\|integer`   |                                       |                                                          |
-| opts  | `nil\|table`     |                                       |                                                          |
-|       | allow            | `nil\|fun(bufnr: integer): boolean`   | Return true to allow switching to the buffer             |
-|       | allow_type       | `nil\|"bufnr"\|"buftype"\|"filetype"` | Allow switching to buffers with a matching value         |
-|       | restore_callback | `nil\|fun(winid: integer)`            | Called after a buffer is restored into the pinned window |
+| Param | Type                  | Desc                                  |                                                                                                        |
+| ----- | --------------------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| winid | `nil\|integer`        |                                       |                                                                                                        |
+| opts  | `nil\|table`          |                                       |                                                                                                        |
+|       | allow                 | `nil\|fun(bufnr: integer): boolean`   | Return true to allow switching to the buffer                                                           |
+|       | allow_type            | `nil\|"bufnr"\|"buftype"\|"filetype"` | Allow switching to buffers with a matching value                                                       |
+|       | restore_callback      | `nil\|fun(winid: integer)`            | Called after a buffer is restored into the pinned window                                               |
+|       | handle_foreign_buffer | `nil\|fun(bufnr: integer)`            | Called when a buffer enters a pinned window. The default implementation opens in a near or new window. |
 
 **Note:**
 <pre>
@@ -189,7 +190,8 @@ The default function for config.get_auto_pin
 require("stickybuf").setup({
   -- This function is run on BufEnter to determine pinning should be activated
   get_auto_pin = function(bufnr)
-    -- You can return "bufnr", "buftype", "filetype", or a custom function to set how the window will be pinned
+    -- You can return "bufnr", "buftype", "filetype", or a custom function to set how the window will be pinned.
+    -- You can instead return an table that will be passed in as "opts" to `stickybuf.pin`.
     -- The function below encompasses the default logic. Inspect the source to see what it does.
     return require("stickybuf").should_auto_pin(bufnr)
   end

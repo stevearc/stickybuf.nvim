@@ -7,6 +7,7 @@ local M = {}
 
 ---@class (exact) stickybuf.WinPinConfig
 ---@field allow fun(bufnr: integer): boolean
+---@field handle_foreign_buffer? fun(bufnr: integer)
 ---@field restore_callback? fun(winid: integer)
 
 ---@param bufnr integer
@@ -46,7 +47,11 @@ local function _on_buf_enter(bufnr)
       vim.fn.win_execute(winid, "noau buffer " .. vim.w.sticky_original_bufnr)
       -- Then open the new buffer in the appropriate location
       vim.defer_fn(function()
-        open_in_best_window(bufnr)
+        if sticky_conf.handle_foreign_buffer then
+          sticky_conf.handle_foreign_buffer(bufnr)
+        else
+          open_in_best_window(bufnr)
+        end
         util.restore_bufhidden(bufnr)
         if sticky_conf.restore_callback then
           sticky_conf.restore_callback(winid)
@@ -65,7 +70,9 @@ local function _on_buf_enter(bufnr)
     -- Check if this buffer should be auto-pinned
     local pintype = config.get_auto_pin(bufnr)
     if pintype then
-      if type(pintype) == "function" then
+      if type(pintype) == "table" then
+        M.pin(0, pintype)
+      elseif type(pintype) == "function" then
         M.pin(0, { allow = pintype })
       else
         M.pin(0, { allow_type = pintype })
@@ -116,6 +123,7 @@ end
 ---    allow nil|fun(bufnr: integer): boolean Return true to allow switching to the buffer
 ---    allow_type nil|"bufnr"|"buftype"|"filetype" Allow switching to buffers with a matching value
 ---    restore_callback nil|fun(winid: integer) Called after a buffer is restored into the pinned window
+---    handle_foreign_buffer nil|fun(bufnr: integer) Called when a buffer enters a pinned window. The default implementation opens in a near or new window.
 ---@note
 --- You cannot specify both 'allow' and 'allow_type'
 M.pin = function(winid, opts)
