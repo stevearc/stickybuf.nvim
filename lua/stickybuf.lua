@@ -285,7 +285,12 @@ M.should_auto_pin = function(bufnr)
   elseif filetype == "fern" and (vim.wo.winfixwidth or vim.wo.winfixheight) then
     -- Only pin fern if it was opened as a split (has fixed height/width)
     return "filetype"
-  elseif vim.startswith(filetype, "Neogit") then
+  elseif
+    vim.startswith(filetype, "Neogit")
+    -- NeogitCommitMessage relies on BufUnload, can't apply to it
+    -- https://github.com/NeogitOrg/neogit/blob/51a6e6c8952b361300be57b36c8e1b973880cdd7/lua/neogit/buffers/commit_editor/init.lua#L43
+    and filetype ~= "NeogitCommitMessage"
+  then
     if vim.fn.winnr("$") > 1 then
       return "filetype"
     end
