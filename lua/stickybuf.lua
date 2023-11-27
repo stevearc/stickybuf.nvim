@@ -128,6 +128,7 @@ M.unpin = function(winid)
     winid = vim.api.nvim_get_current_win()
   end
   vim.w[winid].sticky_win = nil
+  vim.w[winid].sticky_original_bufnr = nil
   -- TODO we actually only want to do this if the buffer isn't pinned in any other windows
   util.restore_bufhidden()
 end
