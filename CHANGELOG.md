@@ -1,5 +1,28 @@
 # Changelog
 
+## [2.0.0](https://github.com/stevearc/stickybuf.nvim/compare/v1.0.0...v2.0.0) (2024-01-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove old deprecated functions, commands, and shims
+
+### cleanup
+
+* remove old deprecated functions, commands, and shims ([92d07c7](https://github.com/stevearc/stickybuf.nvim/commit/92d07c71c7a7397da45a4473f9325b2beb8de7b9))
+
+
+### Features
+
+* option to provide custom handling when pin is triggered ([#21](https://github.com/stevearc/stickybuf.nvim/issues/21)) ([7e58094](https://github.com/stevearc/stickybuf.nvim/commit/7e58094251281e9a4dc0dd0223bf7248d0d50e3b))
+
+
+### Bug Fixes
+
+* disable for Neogit commit message ([#23](https://github.com/stevearc/stickybuf.nvim/issues/23)) ([f3398f8](https://github.com/stevearc/stickybuf.nvim/commit/f3398f8639e903991acdf66e2d63de7a78fe708e))
+* don't pin telescope prompt ([#26](https://github.com/stevearc/stickybuf.nvim/issues/26)) ([42973af](https://github.com/stevearc/stickybuf.nvim/commit/42973af199ad7765dc820e88b51ec86cfde90537))
+* unpin doesn't completely clear state ([#25](https://github.com/stevearc/stickybuf.nvim/issues/25)) ([4271bfc](https://github.com/stevearc/stickybuf.nvim/commit/4271bfc6c85dc035eb9e8484954f9179d90e87ab))
+
 ## 1.0.0 (2023-09-18)
 
 
