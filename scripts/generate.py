@@ -10,10 +10,10 @@ from nvim_doc_tools import (
     format_md_table,
     generate_md_toc,
     leftright,
-    parse_functions,
+    parse_directory,
     read_nvim_json,
-    render_md_api,
-    render_vimdoc_api,
+    render_md_api2,
+    render_vimdoc_api2,
     replace_section,
     wrap,
 )
@@ -33,8 +33,9 @@ def add_md_link_path(path: str, lines: List[str]) -> List[str]:
 
 
 def update_md_api():
-    funcs = parse_functions(os.path.join(ROOT, "lua", "stickybuf.lua"))
-    lines = ["\n"] + render_md_api(funcs, 3) + ["\n"]
+    types = parse_directory(os.path.join(ROOT, "lua"))
+    funcs = types.files["stickybuf.lua"].functions
+    lines = ["\n"] + render_md_api2(funcs, types, 3) + ["\n"]
     replace_section(
         README,
         r"^<!-- API -->$",
@@ -104,12 +105,13 @@ def get_commands_vimdoc() -> "VimdocSection":
 
 def generate_vimdoc():
     doc = Vimdoc("stickybuf.txt", "stickybuf")
-    funcs = parse_functions(os.path.join(ROOT, "lua", "stickybuf.lua"))
+    types = parse_directory(os.path.join(ROOT, "lua"))
+    funcs = types.files["stickybuf.lua"].functions
     doc.sections.extend(
         [
             get_commands_vimdoc(),
             VimdocSection(
-                "API", "stickybuf-api", render_vimdoc_api("stickybuf", funcs)
+                "API", "stickybuf-api", render_vimdoc_api2("stickybuf", funcs, types)
             ),
             convert_md_section_to_vimdoc(
                 README,

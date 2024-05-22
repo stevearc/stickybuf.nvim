@@ -32,7 +32,7 @@ pin({winid}, {opts})                                               *stickybuf.pi
 
     Parameters:
       {winid} `nil|integer`
-      {opts}  `nil|table`
+      {opts}  `nil|stickybuf.pinOpts`
           {allow}            `nil|fun(bufnr: integer): boolean` Return true to
                              allow switching to the buffer
           {allow_type}       `nil|"bufnr"|"buftype"|"filetype"` Allow switching
