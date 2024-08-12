@@ -234,6 +234,7 @@ Stickybuf provides built-in support for:
 - [gkeep.nvim](https://github.com/stevearc/gkeep.nvim)
 - [Overseer](https://github.com/stevearc/overseer.nvim)
 - [nvim-spectre](https://github.com/nvim-pack/nvim-spectre)
+- [grug-far](https://github.com/MagicDuck/grug-far.nvim)
 
 If there is another project that you would like to add out-of-the-box support
 for, submit a pull request, it's likely you'd only need to update the
