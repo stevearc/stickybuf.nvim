@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://github.com/stevearc/stickybuf.nvim/compare/v2.0.0...v2.1.0) (2025-02-12)
+
+
+### Features
+
+* add grug-far.nvim support ([#33](https://github.com/stevearc/stickybuf.nvim/issues/33)) ([468e2b4](https://github.com/stevearc/stickybuf.nvim/commit/468e2b41f102214e6bc493b5b80138cffb49013c))
+
 ## [2.0.0](https://github.com/stevearc/stickybuf.nvim/compare/v1.0.0...v2.0.0) (2024-01-14)
 
 
