@@ -2,9 +2,6 @@ local config = {}
 local util = require("stickybuf.util")
 local M = {}
 
--- TODO remove after https://github.com/folke/neodev.nvim/pull/163 lands
----@diagnostic disable: inject-field
-
 ---@class (exact) stickybuf.WinPinConfig
 ---@field allow fun(bufnr: integer): boolean
 ---@field handle_foreign_buffer? fun(bufnr: integer)
@@ -35,9 +32,6 @@ local function _on_buf_enter(bufnr)
   if util.is_empty_buffer(bufnr) then
     return
   end
-  -- TODO remove after https://github.com/folke/neodev.nvim/pull/163 lands
-  ---@type stickybuf.WinPinConfig
-  ---@diagnostic disable-next-line: undefined-field
   local sticky_conf = vim.w.sticky_win
   if sticky_conf then
     if not sticky_conf.allow(bufnr) then

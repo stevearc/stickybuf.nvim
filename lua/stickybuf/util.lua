@@ -1,8 +1,5 @@
 local M = {}
 
--- TODO remove after https://github.com/folke/neodev.nvim/pull/163 lands
----@diagnostic disable: undefined-field
-
 ---@param bufnr integer
 ---@return boolean
 M.is_empty_buffer = function(bufnr)
