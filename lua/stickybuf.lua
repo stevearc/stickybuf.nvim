@@ -35,10 +35,16 @@ local function _on_buf_enter(bufnr)
   local sticky_conf = vim.w.sticky_win
   if sticky_conf then
     if not sticky_conf.allow(bufnr) then
+      local original_bufnr = vim.w.sticky_original_bufnr
+      if not original_bufnr or not vim.api.nvim_buf_is_valid(original_bufnr) then
+        vim.notify("Could not restore sticky buffer " .. original_bufnr, vim.log.levels.WARN)
+        M.unpin()
+        return
+      end
       -- If this was a sticky window and the buffer no longer matches, restore it
       util.override_bufhidden(bufnr)
       local winid = vim.api.nvim_get_current_win()
-      vim.fn.win_execute(winid, "noau buffer " .. vim.w.sticky_original_bufnr)
+      vim.fn.win_execute(winid, "noau buffer " .. original_bufnr)
       -- Then open the new buffer in the appropriate location
       vim.defer_fn(function()
         if sticky_conf.handle_foreign_buffer then

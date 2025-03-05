@@ -95,6 +95,9 @@ M.restore_bufhidden = function(bufnr)
   if not bufnr or bufnr == 0 then
     bufnr = vim.api.nvim_get_current_buf()
   end
+  if not vim.api.nvim_buf_is_valid(bufnr) then
+    return
+  end
   local prev_bufhidden = vim.b[bufnr].prev_bufhidden
   if prev_bufhidden then
     vim.bo[bufnr].bufhidden = prev_bufhidden
