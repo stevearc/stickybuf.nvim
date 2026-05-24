@@ -227,9 +227,9 @@ M.setup = function(opts)
       vim.log.levels.ERROR
     )
   end
-  config = vim.tbl_deep_extend("keep", opts or {}, {
+  config = assert(vim.tbl_deep_extend("keep", opts or {}, {
     get_auto_pin = M.should_auto_pin,
-  })
+  }))
   local aug = vim.api.nvim_create_augroup("Stickybuf", {})
   vim.api.nvim_create_autocmd("BufEnter", {
     desc = "Restore pinned buffer, if necessary",
